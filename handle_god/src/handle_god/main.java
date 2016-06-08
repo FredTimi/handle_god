@@ -7,21 +7,21 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class main {
-	public static String pathParamFile = System.getProperty("user.dir") + "/ai/";
-	public static String paramFile = "ParamAI.txt";
-	public static String pathDesktopJar = System.getProperty("user.dir") + "/";
+    private static final String CONFIG_FILE_PATH = "project_properties.txt";
+	public static String paramFile = "ai"+File.separator+"ParamAI.txt";
 	public static String desktopJar = "desktop-1.0.jar";
 	public static String waitingGeneration = "toGenerate";
 	public static String modGeneration = "Generation";
 	public static String modCombination = "Combine";
 	public static String modLoad = "Load";
-	
+	public static boolean debug=false;
 	public static void main(String[] args) throws Exception 
 	{
+		loadProperties();
 		while(true)
 		{	
-			if(args[0] == null || args[0] == "" || args.length == 0)
-				runJar(pathDesktopJar+desktopJar);
+			if(args.length == 0 || args[0] == null || args[0] == "" )
+				runJar(desktopJar);
 			else
 				runJar(args[0]);
 		}
@@ -29,25 +29,42 @@ public class main {
 	
 	public static void runJar(String jarPathName) throws Exception
 	{
-		if(fileContains(pathParamFile+paramFile, waitingGeneration))
+		if(fileContains(paramFile, waitingGeneration))
         {
-        	changeModInParamAI(pathParamFile+paramFile, waitingGeneration, modGeneration);
+        	changeModInParamAI(paramFile, waitingGeneration, modGeneration);
         }
 		
 		// Lancement du process
-		Process ps=Runtime.getRuntime().exec(new String[]{"java","-jar",jarPathName});
-        ps.waitFor();
-        //Affichage output si besoin
-//        java.io.InputStream is=ps.getInputStream();
-//        byte b[]=new byte[is.available()];
-//        is.read(b,0,b.length);
-//        System.out.println(new String(b));
-        
-        if(fileContains(pathParamFile+paramFile, modGeneration))
+		final Process ps=Runtime.getRuntime().exec(new String[]{"java","-jar",jarPathName});
+		if(debug)
         {
-        	changeModInParamAI(pathParamFile+paramFile, modGeneration, modCombination);
-        }
+			Thread t = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					boolean crash = false;
+					Scanner sc = new Scanner(ps.getInputStream());
+					try{
+					while(sc.hasNext()){
+					        System.out.println(sc.nextLine());		        
+					}
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+				}
+			});
+			t.start();
         
+        }
+		ps.waitFor();
+        //Affichage output si besoin
+        
+        if(fileContains(paramFile, modGeneration))
+        {
+        	changeModInParamAI(paramFile, modGeneration, modCombination);
+        }
+        Hadoop.createWebTable();
+        Hadoop.saveWebDataOnHive();
 	}
 	
 	public static void changeModInParamAI(String paramAI, String oldMod, String newMod)
@@ -96,4 +113,64 @@ public class main {
 		}	
 		return false;
 	}
+	
+	
+	public static void loadProperties(){
+        System.out.println("Load properties from "+CONFIG_FILE_PATH);
+        File file = new File (CONFIG_FILE_PATH);
+        if(!file.exists())
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        try {
+            Scanner sc = new Scanner(file);
+            String line = "";
+            while(sc.hasNextLine()){
+                line = sc.nextLine();
+                if(line.startsWith("#"))
+                    continue;
+                if(line.contains(":")){
+                    int index = line.indexOf(":");
+                    String param = line.substring(0, index);
+                    String value = line.substring(index+1).trim();
+                    switch(param.trim()){
+                        case "HADOOP_CONFIG_DIRECTORY":
+                            Hadoop.HADOOP_CONFIG_DIRECTORY=value;
+                            break;
+                        case "HIVE" :
+                            Hadoop.HIVE = value;
+                            break;
+                        case "HADOOP_PASSWORD":
+                            Hadoop.HADOOP_USER_PASSWORD = value;
+                            break;
+                        case "HADOOP_USER":
+                            Hadoop.HADOOP_USER_NAME = value;
+                            break;
+                        case "HDFS":
+                            Hadoop.HDFS_PATH = value;
+                        case "GENETIC_DIRECTORY":
+                                Hadoop.GENETIC_DIRECTORY = value;
+                                break;
+                        case "GENETIC_TESTED_DIRECTORY":
+                                Hadoop.GENETIC_TESTED = value;
+                            break;
+                        case "PARAM_FILE":
+                        	paramFile = value;
+                        	break;
+                        case "SHOW_DEBUG":
+                            	debug = true;
+                            	break;
+                        default :
+                            System.err.println("Can't find : "+param);
+                            break;
+                    }
+                }
+            }
+            sc.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 }
