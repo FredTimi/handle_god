@@ -95,22 +95,28 @@ public class Hadoop {
 		con.close();
 	}
 	
-	public static void createGeneticTable() throws ClassNotFoundException, SQLException {
-
-		Class.forName(driverName);
-		System.out.println(TAG + ": Connect to HIVE database : " + HIVE + " with user " + HADOOP_USER_NAME + ", password " + HADOOP_USER_PASSWORD);
-		Connection con = HADOOP_USER_NAME.isEmpty() ? DriverManager.getConnection(HIVE) : DriverManager.getConnection(HIVE, HADOOP_USER_NAME, HADOOP_USER_PASSWORD);
-		Statement stmt = con.createStatement();
-		System.out.println(TAG + ": Connection successful-------------------------------");
-		String query = "CREATE TABLE IF NOT EXISTS " + GENETIC_TABLE_NAME + " (filename String, name String," + "generation String, dateG DATE," + "scoreG int, scoreA int,"
-				+ "scoreH int, scoreP int) " + "COMMENT 'Genetic AI details' " + "ROW FORMAT DELIMITED " + "FIELDS TERMINATED BY '\\t' " + "LINES TERMINATED BY '\\n' "
-				+ "STORED AS TEXTFILE";
-		System.out.println(TAG + ": Execute query [" + query + "]");
-		stmt.executeQuery(query);
-		System.out.println(TAG + ": Table " + GENETIC_TABLE_NAME + " created");
-		con.close();
-	}
-
+    public static void createGeneticTable() throws ClassNotFoundException, SQLException {
+        
+        Class.forName(driverName);
+        System.out.println(TAG+": Connect to HIVE database : "+HIVE+" with user "+HADOOP_USER_NAME+", password "+HADOOP_USER_PASSWORD);
+        Connection con = HADOOP_USER_NAME.isEmpty() ? DriverManager.getConnection(HIVE) : DriverManager.getConnection(HIVE, HADOOP_USER_NAME, HADOOP_USER_PASSWORD);
+        Statement stmt = con.createStatement();
+        System.out.println(TAG+": Connection successful-------------------------------");
+        String query = "CREATE TABLE IF NOT EXISTS "+GENETIC_TABLE_NAME
+                +" (filename String, name String," +
+                "generation String, dateG DATE," +
+                "scoreG int, scoreA int," +
+                "scoreH int, scoreP int) " +
+                "COMMENT 'Genetic AI details' " +
+                "ROW FORMAT DELIMITED " +
+                "FIELDS TERMINATED BY '\\t' " +
+                "LINES TERMINATED BY '\\n' " +
+                "STORED AS TEXTFILE";
+        System.out.println(TAG+": Execute query ["+query+"]");
+        stmt.executeQuery(query);
+        System.out.println(TAG + ": Table " + GENETIC_TABLE_NAME + " created");
+        con.close();
+    }
 	public static void saveGeneticDataOnHive(String name, String generation, String date, int scoreG, int scoreA, int scoreH, int scoreP) throws SQLException {
 
 		// create the file with data for hive

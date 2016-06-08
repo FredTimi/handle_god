@@ -15,9 +15,12 @@ public class main {
 	public static String modCombination = "Combine";
 	public static String modLoad = "Load";
 	public static boolean debug=false;
+	
+	
 	public static void main(String[] args) throws Exception 
 	{
 		loadProperties();
+		//Hadoop.createGeneticTable();
 		while(true)
 		{	
 			if(args.length == 0 || args[0] == null || args[0] == "" )
@@ -63,8 +66,7 @@ public class main {
         {
         	changeModInParamAI(paramFile, modGeneration, modCombination);
         }
-        Hadoop.createWebTable();
-        Hadoop.saveWebDataOnHive();
+        //Hadoop.saveWebDataOnHive();
 	}
 	
 	public static void changeModInParamAI(String paramAI, String oldMod, String newMod)
