@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class main {
-	public static String paramFile = System.getProperty("user.dir") + "/ai/ParamAI.txt";
-	public static String desktopJar = System.getProperty("user.dir") + "desktop-1.0.jar";
+	public static String pathParamFile = System.getProperty("user.dir") + "/ai/";
+	public static String paramFile = "ParamAI.txt";
+	public static String pathDesktopJar = System.getProperty("user.dir");
+	public static String desktopJar = "desktop-1.0.jar";
 	public static String waitingGeneration = "toGenerate";
 	public static String modGeneration = "Generation";
 	public static String modCombination = "Combine";
@@ -19,7 +21,7 @@ public class main {
 		while(true)
 		{	
 			if(args[0] == null || args[0] == "" || args.length == 0)
-				runJar(desktopJar);
+				runJar(pathDesktopJar+desktopJar);
 			else
 				runJar(args[0]);
 		}
@@ -27,9 +29,9 @@ public class main {
 	
 	public static void runJar(String jarPathName) throws Exception
 	{
-		if(fileContains(paramFile, waitingGeneration))
+		if(fileContains(pathParamFile+paramFile, waitingGeneration))
         {
-        	changeModInParamAI(paramFile, waitingGeneration, modGeneration);
+        	changeModInParamAI(pathParamFile+paramFile, waitingGeneration, modGeneration);
         }
 		
 		// Lancement du process
@@ -41,9 +43,9 @@ public class main {
 //        is.read(b,0,b.length);
 //        System.out.println(new String(b));
         
-        if(fileContains(paramFile, modGeneration))
+        if(fileContains(pathParamFile+paramFile, modGeneration))
         {
-        	changeModInParamAI(paramFile, modGeneration, modCombination);
+        	changeModInParamAI(pathParamFile+paramFile, modGeneration, modCombination);
         }
         
 	}
@@ -74,27 +76,6 @@ public class main {
         }
         catch (IOException e)
         {e.printStackTrace();}
-        System.out.println("fin de test");
-        /*
-         * try{
-			File file = new File (paramAI);
-		    FileReader fr = new FileReader(file);
-		    String s;
-		    String totalStr = "";
-		    try (BufferedReader br = new BufferedReader(fr)) {
-
-		        while ((s = br.readLine()) != null) {
-		            totalStr += s+"\r\n";
-		        }
-		        totalStr = totalStr.replaceAll(oldMod, newMod);
-		        FileWriter fw = new FileWriter(file);
-		    fw.write(totalStr);
-		    fw.close();
-		    }
-		}catch(Exception e){
-		    e.printStackTrace();
-		}
-         * */
 	}
 
 	public static boolean fileContains(String paramAI, String research)
