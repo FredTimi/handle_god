@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class main {
 	public static String pathParamFile = System.getProperty("user.dir") + "/ai/";
 	public static String paramFile = "ParamAI.txt";
-	public static String pathDesktopJar = System.getProperty("user.dir");
+	public static String pathDesktopJar = System.getProperty("user.dir") + "/";
 	public static String desktopJar = "desktop-1.0.jar";
 	public static String waitingGeneration = "toGenerate";
 	public static String modGeneration = "Generation";
