@@ -66,6 +66,11 @@ public class main {
         {
         	changeModInParamAI(paramFile, modGeneration, modCombination);
         }
+        
+        if(fileContains(paramFile, modLoad))
+        {
+        	System.exit(0);
+        }
         //Hadoop.saveWebDataOnHive();
 	}
 	
