@@ -21,13 +21,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Hadoop {
 
 	private static final String WEB_TABLE_NAME = "WEB";
+	private static final String LAST_TABLE_NAME = "last";
 	public static String HADOOP_CONFIG_DIRECTORY = "/hadoop/hadoop-2.7.1/etc/hadoop/";
 	public static String TAG = "HADOOP";
 	public static String GENETIC_DIRECTORY = "genetique/";
@@ -247,4 +250,24 @@ public class Hadoop {
 		}
 
 	}
+
+	public static ArrayList<String> getLastGenerationFilename() throws ClassNotFoundException, SQLException {
+		Class.forName(driverName);
+		System.out.println(TAG + ": Connect to HIVE database : " + HIVE + " with user " + HADOOP_USER_NAME + ", password " + HADOOP_USER_PASSWORD);
+		Connection con = HADOOP_USER_NAME.isEmpty() ? DriverManager.getConnection(HIVE) : DriverManager.getConnection(HIVE, HADOOP_USER_NAME, HADOOP_USER_PASSWORD);
+		Statement stmt = con.createStatement();
+		System.out.println(TAG + ": Connection successful-------------------------------");
+		String query = "select filename from " + LAST_TABLE_NAME +"order by scoreg desc;";
+		System.out.println(TAG + ": Execute query [" + query + "]");
+		stmt.executeQuery(query);
+		ResultSet set = stmt.getResultSet();
+		ArrayList<String> array = new ArrayList<>();
+		while(set.next())
+		{
+			array.add(set.getString(0));
+		}
+		con.close();
+		return array;
+	}
+
 }
