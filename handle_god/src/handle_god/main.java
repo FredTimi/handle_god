@@ -80,14 +80,11 @@ public class main {
         	changeModInParamAI(paramFile, modGeneration, modCombination);
         }
         
-        /*
-        ArrayList<String> array = new ArrayList<>();
-        array = getFilterList();
-        if(fileContains(paramFile, modCombination))
-        	setFilter();
-        removeUnlessPoolsTrees(array);
-        */
-        //Hadoop.saveWebDataOnHive();
+        if(fileContains(paramFile, modLoad))
+        {
+        	System.exit(0);
+        }
+
 	}
 	
 	public static void changeModInParamAI(String paramAI, String oldMod, String newMod)
